@@ -1,6 +1,8 @@
 package lab5_graphenv_task2;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -93,7 +95,7 @@ public class Lab5_GraphEnv_Task2 extends Application {
         // Create clear button
         Button clearButton = new Button("Clear Bill");
         gridPane.add(clearButton, 0, 12);
-        
+
         // Clear selections for clear button
         clearButton.setOnMouseClicked(e -> {
             cbBeverage.getSelectionModel().clearSelection();
@@ -106,6 +108,36 @@ public class Lab5_GraphEnv_Task2 extends Application {
             tipAmountLabel.setText("Tip: 0.00$");
             totalLabel.setText("Total: 0.00$");
         });
+
+        // Calculate the subtotal, tax, tip, and total
+        EventHandler priceHandler = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent t) {
+                double beveragePrice = getPrice(cbBeverage.getValue());
+                double appetizerPrice = getPrice(cbAppetizer.getValue());
+                double mainPrice = getPrice(cbMain.getValue());
+                double dessertPrice = getPrice(cbDessert.getValue());
+
+                double subtotal = beveragePrice + appetizerPrice + mainPrice + dessertPrice;
+                double tax = subtotal * 0.15;
+                double tipPercent = slider.getValue();
+                double tip = subtotal * (tipPercent / 100);
+                double total = subtotal + tax + tip;
+
+                subtotalLabel.setText("Subtotal: " + subtotal + "$");
+                taxLabel.setText("Tax: " + tax + "$");
+                tipAmountLabel.setText("Tip: " + tip + "$");
+                totalLabel.setText("Total: " + total + "$");
+            }
+        };
+
+        cbBeverage.setOnAction(priceHandler);
+        cbAppetizer.setOnAction(priceHandler);
+        cbMain.setOnAction(priceHandler);
+        cbDessert.setOnAction(priceHandler);
+        slider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            priceHandler.handle(new ActionEvent(slider, null));
+        });
         
         // Add and show scene
         Scene scene = new Scene(root, 800, 375);
@@ -114,4 +146,18 @@ public class Lab5_GraphEnv_Task2 extends Application {
         primaryStage.show();
     }
 
+    // Retrieve the price of all the items from their value in ComboBox
+    private double getPrice(String item) {
+        if (item == null || item.isEmpty()) {
+            return 0.0;
+        }
+
+        int start = item.indexOf('(');
+        int end = item.lastIndexOf('$');
+        if (start == -1 || end == -1 || start >= end) {
+            return 0.0;
+        }
+
+        return Double.parseDouble(item.substring(start + 1, end));
+    }
 }

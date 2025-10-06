@@ -46,6 +46,10 @@ public class Lab5_GraphEnv_Task2 extends Application {
         Label mainLabel = new Label("Select Main Course: ");
         Label dessertLabel = new Label("Select Dessert:");
         Label tipLabel = new Label("Select Tip (%): ");
+        Label subtotalLabel = new Label("Subtotal: 0.00$");
+        Label taxLabel = new Label("Tax: 0.00$");
+        Label tipAmountLabel = new Label("Tip: 0.00$");
+        Label totalLabel = new Label("Total: 0.00$");
 
         // Add labels to GridPane
         gridPane.add(beverageLabel, 0, 0);
@@ -53,6 +57,10 @@ public class Lab5_GraphEnv_Task2 extends Application {
         gridPane.add(mainLabel, 2, 0);
         gridPane.add(dessertLabel, 3, 0);
         gridPane.add(tipLabel, 0, 4);
+        gridPane.add(subtotalLabel, 0, 7);
+        gridPane.add(taxLabel, 0, 8);
+        gridPane.add(tipAmountLabel, 0, 9);
+        gridPane.add(totalLabel, 0, 10);
 
         // Create ComboBoxes
         ComboBox<String> cbBeverage = new ComboBox<>();
@@ -72,7 +80,7 @@ public class Lab5_GraphEnv_Task2 extends Application {
         gridPane.add(cbMain, 2, 1);
         gridPane.add(cbDessert, 3, 1);
 
-        // Make the Slider.
+        // Create slider
         Slider slider = new Slider(MIN, MAX, INITIAL);
         slider.setShowTickMarks(true);
         slider.setMajorTickUnit(MAJOR_TICK_UNIT);
@@ -82,11 +90,25 @@ public class Lab5_GraphEnv_Task2 extends Application {
         slider.setPrefWidth(SLIDER_WIDTH);
         gridPane.add(slider, 0, 5, 4, 1);
 
+        // Create clear button
         Button clearButton = new Button("Clear Bill");
-        gridPane.add(clearButton, 0, 7);
+        gridPane.add(clearButton, 0, 12);
+        
+        // Clear selections for clear button
+        clearButton.setOnMouseClicked(e -> {
+            cbBeverage.getSelectionModel().clearSelection();
+            cbAppetizer.getSelectionModel().clearSelection();
+            cbMain.getSelectionModel().clearSelection();
+            cbDessert.getSelectionModel().clearSelection();
+            slider.setValue(INITIAL);
+            subtotalLabel.setText("Subtotal: 0.00$");
+            taxLabel.setText("Tax: 0.00$");
+            tipAmountLabel.setText("Tip: 0.00$");
+            totalLabel.setText("Total: 0.00$");
+        });
         
         // Add and show scene
-        Scene scene = new Scene(root, 800, 425);
+        Scene scene = new Scene(root, 800, 375);
         primaryStage.setTitle("Restaurant Menu Form");
         primaryStage.setScene(scene);
         primaryStage.show();
